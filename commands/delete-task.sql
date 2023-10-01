@@ -1,0 +1,1 @@
+INSERT INTO public.tasks (name, assigned_to, description,doc_link , priority, project_tag,due_date,status) VALUES ({{request.body.name}},{{request.body.assigned_to}},{{request.body.description}},{{request.body.doc_link}},{{request.body.priority}},{{request.body.project_tag}},{{request.body.due_date}},{{request.body.status}});                
