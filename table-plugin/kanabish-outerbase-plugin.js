@@ -93,7 +93,6 @@ class OuterbasePluginConfig_$PLUGIN_ID {
   }
 }
 var triggerEvent = (fromClass, data) => {
-  console.log(data);
   const event = new CustomEvent("custom-change", {
     detail: data,
     bubbles: true,
@@ -412,8 +411,6 @@ class OuterbasePluginTable_$PLUGIN_ID extends HTMLElement {
     function getCard(
       id,
       name,
-      desc,
-      status,
       description,
       doc_link,
       due_date,
@@ -587,37 +584,19 @@ class OuterbasePluginTable_$PLUGIN_ID extends HTMLElement {
       ${
         this.config.tableValue &&
         this.config.tableValue
-          .map(
-            (
-              {
-                id,
-                name,
-                desc,
-                status,
-                description,
-                doc_link,
-                due_date,
-                priority,
-                project_tag,
-                assigned_to,
-              },
-              index
-            ) => {
-              if (status === board.id)
-                return getCard(
-                  id,
-                  name,
-                  desc,
-                  status,
-                  description,
-                  doc_link,
-                  due_date,
-                  priority,
-                  project_tag,
-                  assigned_to
-                );
-            }
-          )
+          .map((data, index) => {
+            if (data[this.config.taskStatus] === board.id)
+              return getCard(
+                data[this.config.taskId],
+                data[this.config.taskName],
+                data[this.config.taskDesc],
+                data[this.config.taskDocLink],
+                data[this.config.taskDueDate],
+                data[this.config.taskPriority],
+                data[this.config.taskProjectTag],
+                data[this.config.taskAssignedName]
+              );
+          })
           .join("")
       }
       <button id="add-task-button">
@@ -854,15 +833,15 @@ class OuterbasePluginTable_$PLUGIN_ID extends HTMLElement {
         status
       ) {
         let row = {
-          assigned_to: taskAssignedName,
-          description: taskDesc,
-          doc_link: taskDocLink,
-          due_date: taskDueDate,
-          id: String(this.config.tableValue.length + 1),
-          name: taskName,
-          priority: taskPriority,
-          project_tag: taskProjectTag,
-          status: status,
+          [this.config.taskAssignedName]: taskAssignedName,
+          [this.config.taskDesc]: taskDesc,
+          [this.config.taskDocLink]: taskDocLink,
+          [this.config.taskDueDate]: taskDueDate,
+          [this.config.taskId]: String(this.config.tableValue.length + 1),
+          [this.config.taskName]: taskName,
+          [this.config.taskPriority]: taskPriority,
+          [this.config.taskProjectTag]: taskProjectTag,
+          [this.config.taskStatus]: status,
         };
         this.config.tableValue.push(row);
         fetch("https://polite-aquamarine.cmd.outerbase.io/create-task", {
@@ -1223,7 +1202,6 @@ class OuterbasePluginTableConfiguration_$PLUGIN_ID extends HTMLElement {
         <div class="form-item">
           <label>Task Project Tag key</label>
           <select id="taskProjectTagKey">
-          elect id="taskProjectTagKey">
             ` +
       keys
         .map(
@@ -1349,6 +1327,7 @@ class OuterbasePluginTableConfiguration_$PLUGIN_ID extends HTMLElement {
 
     var saveButton = this.shadow.querySelector("#submit-button");
     saveButton.addEventListener("click", () => {
+      console.log(this.config);
       triggerEvent(this, {
         action: OuterbaseEvent.onSave,
         value: this.config.toJSON(),
@@ -1380,6 +1359,11 @@ class OuterbasePluginTableConfiguration_$PLUGIN_ID extends HTMLElement {
       this.config.taskDueDate = taskDueDateKey.value;
       this.render();
     });
+    var taskDocLink= this.shadow.querySelector("#taskDocLinkKey");
+    taskDocLink.addEventListener("change", () => {
+      this.config.taskDocLink = taskDocLink.value;
+      this.render();
+    });
     var taskPriorityKey = this.shadow.querySelector("#taskPriorityKey");
     taskPriorityKey.addEventListener("change", () => {
       this.config.taskPriority = taskPriorityKey.value;
@@ -1395,6 +1379,8 @@ class OuterbasePluginTableConfiguration_$PLUGIN_ID extends HTMLElement {
       this.config.taskStatus = taskStatusKey.value;
       this.render();
     });
+
+    
   }
 }
 
