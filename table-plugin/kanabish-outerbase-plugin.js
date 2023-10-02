@@ -1355,6 +1355,11 @@ class OuterbasePluginTableConfiguration_$PLUGIN_ID extends HTMLElement {
       });
     });
 
+    var taskIdKey = this.shadow.querySelector("#taskIdKey");
+    taskIdKey.addEventListener("change", () => {
+      this.config.taskId = taskIdKey.value;
+      this.render();
+    });
     var taskNameKey = this.shadow.querySelector("#taskNameKey");
     taskNameKey.addEventListener("change", () => {
       this.config.taskName = taskNameKey.value;
