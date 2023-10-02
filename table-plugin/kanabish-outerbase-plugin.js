@@ -1355,7 +1355,7 @@ class OuterbasePluginTableConfiguration_$PLUGIN_ID extends HTMLElement {
       this.render();
     });
     var taskDueDateKey = this.shadow.querySelector("#taskDueDateKey");
-    taskDescKey.addEventListener("change", () => {
+    taskDueDateKey.addEventListener("change", () => {
       this.config.taskDueDate = taskDueDateKey.value;
       this.render();
     });
